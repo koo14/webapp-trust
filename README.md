@@ -85,7 +85,7 @@ flowchart TB
     WebCrypto --> DPoPSigner
     TokenClient --> DPoPSigner
     UI -->|Pre-Hash + Nonce + DPoP| BFF
-    TokenClient -->|Bearer AT (1-5m) + DPoP Proof| BFF
+    TokenClient -->|"Bearer AT (1-5m) + DPoP Proof"| BFF
     BFF --> DPoPVerifier
     BFF --> TokenMgr
     BFF --> AuthSvc
