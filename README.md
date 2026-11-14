@@ -12,6 +12,16 @@ English | [简体中文](./readme-zh-hans.md) | [正體中文](./readme-zh-hant.
 
 ---
 
+## 📦 Installation
+
+Install this skill into your AI agent environment with a single command:
+
+```bash
+npx skills add koo14/webapp-trust
+```
+
+---
+
 ## 🌟 Core Principles & Security Pillars
 
 ```
