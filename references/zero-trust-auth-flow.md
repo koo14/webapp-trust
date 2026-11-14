@@ -47,20 +47,12 @@ sequenceDiagram
 
 To prevent plaintext password exposure in client memory snapshots, network hops, and server compromises, password verification is split across multiple cryptographic tiers.
 
-```
-[Raw User Password]
-        │
-        ▼ (Client Side: Web Worker / Wasm)
-   Client Pre-Hash = HMAC-SHA256(RawPassword, ClientSalt + UserIdentifier)
-        │
-        ▼ (Over TLS with Nonce)
-[Server Ingress]
-        │
-        ▼ (Server Side: Auth Service)
-   Server Multi-Tier Hash = Argon2id(ClientPreHash, ServerSalt, Memory=64MB, Iterations=3, Parallelism=4)
-        │
-        ▼ (Persistence: KMS Envelope Encryption)
-   Ciphertext = AES-256-GCM_Encrypt(ServerMultiTierHash, DEK)
+```mermaid
+flowchart TB
+    Raw["Raw User Password"] -->|"Client Side: Web Worker / Wasm"| PreHash["Client Pre-Hash = HMAC-SHA256(RawPassword, ClientSalt + UserIdentifier)"]
+    PreHash -->|"Over TLS with Nonce"| Ingress["Server Ingress"]
+    Ingress -->|"Server Side: Auth Service"| Argon["Server Multi-Tier Hash = Argon2id(ClientPreHash, ServerSalt, Memory=64MB, Iterations=3, Parallelism=4)"]
+    Argon -->|"Persistence: KMS Envelope Encryption"| Cipher["Ciphertext = AES-256-GCM_Encrypt(ServerMultiTierHash, DEK)"]
 ```
 
 ### Advantages:

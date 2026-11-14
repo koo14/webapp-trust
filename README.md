@@ -24,12 +24,14 @@ npx skills add koo14/webapp-trust
 
 ## 🌟 Core Principles & Security Pillars
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                           Three Zero-Trust Tenets                           │
-│  1. Verify Explicitly            2. Use Least Privilege Access             │
-│  3. Assume Breach (Assume network is tapped, client is probed, DB is dumped)│
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    subgraph Tenets ["Three Zero-Trust Tenets"]
+        direction LR
+        T1["1. Verify Explicitly"]
+        T2["2. Use Least Privilege Access"]
+        T3["3. Assume Breach<br/>(Assume network is tapped, client is probed, DB is dumped)"]
+    end
 ```
 
 - 🔄 **Single-Use Cryptographic Nonce Anti-Replay**: High-security authentication transactions (login, credential change, token rotation) require pre-negotiated server nonces, atomically consumed (`GETDEL` semantics) and continuously rotated to prevent replay attacks.

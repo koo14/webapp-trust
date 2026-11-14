@@ -24,12 +24,14 @@ npx skills add koo14/webapp-trust
 
 ## 🌟 核心设计理念与安全特性
 
-```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                            零信任三大核心准则                               │
-│  1. 持续验证 (Verify Explicitly)   2. 最小特权 (Least Privilege Access)     │
-│  3. 假定失陷 (Assume Breach: 假定网络可被抓包、浏览器可被渗透、数据库可被盗) │
-└─────────────────────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart LR
+    subgraph Tenets ["零信任三大核心准则"]
+        direction LR
+        T1["1. 持续验证 (Verify Explicitly)"]
+        T2["2. 最小特权 (Least Privilege Access)"]
+        T3["3. 假定失陷 (Assume Breach)<br/>(假定网络可被抓包、浏览器可被渗透、数据库可被盗)"]
+    end
 ```
 
 - 🔄 **单次密码学 Nonce 防重放**：高安全认证请求（登录、修改凭证、令牌刷新等）强制服务端预协商签发 Nonce，使用后原子核销（`GETDEL` 语义）并链式轮换，从源头阻断重放攻击。

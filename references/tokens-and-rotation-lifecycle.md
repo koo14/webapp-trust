@@ -89,12 +89,14 @@ To prevent token theft and replay attacks, every refresh operation executes **Re
 ### Token Family & Generation Model
 Every session is assigned a unique `family_id`. Within this family, tokens advance through monotonic generations ($G_0 \to G_1 \to G_2 \to \dots$).
 
-```
-[Family: fam_888]
-  Generation 0 (rt_abc...)  --> [Rotated & Marked USED]
-        │ (Legitimate Refresh)
-        ▼
-  Generation 1 (rt_def...)  --> [Current ACTIVE Token]
+```mermaid
+flowchart TB
+    subgraph Family ["Family: fam_888"]
+        direction TB
+        G0["Generation 0 (rt_abc...)"] --> S0["Rotated & Marked USED"]
+        G0 -->|Legitimate Refresh| G1["Generation 1 (rt_def...)"]
+        G1 --> S1["Current ACTIVE Token"]
+    end
 ```
 
 ### Breach Detection & Automatic Family Invalidation (Cascading Revocation)
