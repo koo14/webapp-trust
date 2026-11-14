@@ -11,11 +11,31 @@ description: >-
 
 # WebApp Trust: Zero-Trust Web Application Authentication Skill
 
-This skill provides comprehensive architectural patterns, security standards, and production-ready implementations for building resilient, zero-trust web application authentication systems.
+This skill provides a **two-layer** security framework:
+1. **Theoretical Layer (Protocol-Agnostic)**: Formal trust boundaries, capability-based adversary models ($\mathcal{A}_{\text{net}}$, $\mathcal{A}_{\text{client}}$, $\mathcal{A}_{\text{store}}$, $\mathcal{A}_{\text{post}}$), five cryptographic/system invariants (`I1`–`I5`), and deterministic security state machines ([Formal Security Model](./references/formal-security-model.md)).
+2. **Instantiation Layer (Web / BFF / TypeScript)**: Concrete production bindings using Web Crypto (`extractable: false`), Web Workers/Wasm, RFC 9449 DPoP, RTR, `__Host-` `HttpOnly` cookies, Argon2id, and KMS envelope encryption.
 
 ---
 
-## Core Security Architecture
+## 1. Theoretical Axioms & Security Invariants
+
+Before selecting libraries or writing endpoints, align every design or audit against these five protocol-agnostic invariants (see [Formal Security Model](./references/formal-security-model.md) for formal definitions and FSMs):
+
+| Invariant | Formal Guarantee | Adversary Mitigated | Web / BFF Instantiation |
+| :--- | :--- | :--- | :--- |
+| **I1. State Freshness** | Challenges are single-use (`AtomicConsume`) within a bounded window $\Delta t$. | $\mathcal{A}_{\text{net}}$ (Replay) | Pre-negotiated Nonce + Redis `GETDEL` |
+| **I2. Proof-of-Possession** | Bearer credential + non-exportable key signature bound to `(method, uri, t, n, ath)`. | $\mathcal{A}_{\text{post}}$, $\mathcal{A}_{\text{net}}$ | RFC 9449 DPoP + `SubtleCrypto` (`extractable: false`) |
+| **I3. Monotonic Family** | At most one generation $G_k$ is `ACTIVE`; reuse of any `USED` $G_i$ collapses family to `REVOKED`. | $\mathcal{A}_{\text{post}}$ (Token Theft) | Dual-Token + RTR Family Tree |
+| **I4. Key Hierarchy** | Per-record $\text{DEK}_r$ wrapped by external root $\text{KEK}_v$; no plaintext key co-located with data. | $\mathcal{A}_{\text{store}}$ (DB Dump) | KMS / HSM Envelope Encryption (`AES-256-GCM`) |
+| **I5. Ephemeral Residency** | Plaintext secrets have bounded residency $T_{\text{res}} \to 0$ in GC heaps and 0 disk persistence. | $\mathcal{A}_{\text{client}}$ (XSS / Heap) | Web Worker + Wasm Linear Memory + `.fill(0)` + In-Memory AT |
+
+### Agent Execution Workflows & Anti-Patterns
+- **Designing / Building from Scratch**: Start by reading [Formal Security Model](./references/formal-security-model.md) to define trust zones and choose a security tier (Baseline $\to$ High-Assurance), then read the specific `references/*.md` guides for each primitive.
+- **Auditing / Refactoring**: Check invariants `I1`–`I5` systematically. Flag **Red Flags** immediately: AT stored in `localStorage`/`IndexedDB`, `extractable: true` keys, missing `ath` enforcement when `accessToken` is present, non-atomic nonce checks, `window.crypto` inside Workers, or unencrypted TOTP/password verifiers in DB.
+
+---
+
+## 2. Core Security Architecture
 
 ```mermaid
 flowchart TB
@@ -71,7 +91,7 @@ flowchart TB
 
 ---
 
-## 1. Architectural Checklist & Standards
+## 3. Architectural Checklist & Standards
 
 | Security Domain | Mandatory Controls | Reference Guide |
 | :--- | :--- | :--- |
@@ -90,9 +110,10 @@ flowchart TB
 
 ---
 
-## 2. Directory Navigation
+## 4. Directory Navigation
 
 ### Technical References
+- [Formal Security Model, Adversary Abstractions & Invariants](./references/formal-security-model.md)
 - [Detailed Auth Flow & Nonce Protocol](./references/zero-trust-auth-flow.md)
 - [Access Token & Refresh Token Rotation (RTR) Lifecycle](./references/tokens-and-rotation-lifecycle.md)
 - [Client Memory Defense, Wasm & Web Crypto](./references/client-defense-and-webcrypto.md)

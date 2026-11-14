@@ -122,6 +122,7 @@ flowchart TB
 ├── SKILL.md                                  # Agent Main Manual (Loaded by Antigravity)
 │
 ├── references/                               # Technical Specifications & Security Guides
+│   ├── formal-security-model.md              # 0. Formal Trust Boundaries, Adversary Model, Invariants & FSMs
 │   ├── zero-trust-auth-flow.md               # 1. Nonce Handshake, Multi-Tier Hashing & Password Migration
 │   ├── tokens-and-rotation-lifecycle.md      # 2. Dual-Token (AT 1-5m + RT 1-3d), RTR Rotation & Breach Revocation
 │   ├── client-defense-and-webcrypto.md       # 3. Non-Extractable Keys, Wasm Linear Memory, Scrubbing & COI
@@ -202,7 +203,7 @@ try {
 
 ## 🧪 Running the Verification Test Suite
 
-The skill includes an automated end-to-end integration simulation suite [`verification-suite.ts`](file:///c:/Users/hokdu/.agents/skills/webapp-trust/examples/verification-suite.ts) verifying all 12 key cryptographic and authentication phases:
+The skill includes an automated end-to-end integration simulation suite [`verification-suite.ts`](./examples/verification-suite.ts) verifying all 12 key cryptographic and authentication phases:
 
 1. **Step 1-2**: Server issues pre-negotiated Nonce $\to$ Client computes HMAC pre-hash and zeroes raw password memory with `.fill(0)`.
 2. **Step 3-4**: Database loads `v1` legacy credential record $\to$ Server atomically validates Nonce and issues next rotated Nonce.

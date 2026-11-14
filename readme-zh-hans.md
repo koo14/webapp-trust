@@ -122,6 +122,7 @@ flowchart TB
 ├── SKILL.md                                  # 智能体主指令手册（供 Antigravity 调阅）
 │
 ├── references/                               # 深度技术规格与安全白皮书
+│   ├── formal-security-model.md              # 0. 形式化信任边界、敌手能力模型、五大安全不变量与状态机
 │   ├── zero-trust-auth-flow.md               # 1. Nonce 协商防重放、多阶加盐散列与密码版本迁移机制
 │   ├── tokens-and-rotation-lifecycle.md      # 2. 双 Token (AT 1-5m + RT 1-3d) 生命周期、RTR 轮换与熔断
 │   ├── client-defense-and-webcrypto.md       # 3. 非导出密钥、Wasm 线性内存、内存擦除、CSP/Trusted Types 及 COI
@@ -202,7 +203,7 @@ try {
 
 ## 🧪 运行端到端集成验证套件
 
-技能库自带了完整的模拟验证脚本 [`verification-suite.ts`](file:///c:/Users/hokdu/.agents/skills/webapp-trust/examples/verification-suite.ts)，覆盖以下关键流程：
+技能库自带了完整的模拟验证脚本 [`verification-suite.ts`](./examples/verification-suite.ts)，覆盖以下关键流程：
 
 1. **Step 1-2**：服务端签发预协商 Nonce $\to$ 客户端 HMAC 预散列并使用 `.fill(0)` 立即擦除原始内存；
 2. **Step 3-4**：数据库加载 `v1` 旧版本用户凭据 $\to$ 服务端原子核销 Nonce 并签发轮换 Nonce；

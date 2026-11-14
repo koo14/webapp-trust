@@ -18,8 +18,11 @@ function base64UrlEncode(data: Uint8Array | string): string {
   return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
+const publicJwkCache = new WeakMap<CryptoKey, JsonWebKey>();
+
 /**
  * Generates an RFC 9449 compliant DPoP Proof JWT using a non-extractable private key.
+ * Compatible with both main thread and Web Worker contexts via globalThis.crypto.
  *
  * @param keyPair - Non-extractable ECDSA P-256 CryptoKeyPair.
  * @param params - HTTP request context and server nonce.
@@ -28,7 +31,11 @@ export async function createDPoPProof(
   keyPair: CryptoKeyPair,
   params: DPoPProofParams
 ): Promise<string> {
-  const exportedPublicJWK = await window.crypto.subtle.exportKey("jwk", keyPair.publicKey);
+  let exportedPublicJWK = publicJwkCache.get(keyPair.publicKey);
+  if (!exportedPublicJWK) {
+    exportedPublicJWK = await globalThis.crypto.subtle.exportKey("jwk", keyPair.publicKey);
+    publicJwkCache.set(keyPair.publicKey, exportedPublicJWK);
+  }
 
   // 1. Build DPoP Header with ephemeral public JWK
   const header = {
@@ -44,7 +51,7 @@ export async function createDPoPProof(
 
   // 2. Build DPoP Payload
   const payload: Record<string, unknown> = {
-    jti: window.crypto.randomUUID(),
+    jti: globalThis.crypto.randomUUID(),
     htm: params.httpMethod.toUpperCase(),
     htu: params.httpUrl.split("?")[0], // Strip query parameters
     iat: Math.floor(Date.now() / 1000),
@@ -56,7 +63,7 @@ export async function createDPoPProof(
 
   if (params.accessToken) {
     // ath: SHA-256 hash of the access token
-    const tokenHash = await window.crypto.subtle.digest(
+    const tokenHash = await globalThis.crypto.subtle.digest(
       "SHA-256",
       new TextEncoder().encode(params.accessToken)
     );
@@ -68,7 +75,7 @@ export async function createDPoPProof(
   const signingInput = `${encodedHeader}.${encodedPayload}`;
 
   // 3. Sign using the non-extractable private key
-  const signatureBuffer = await window.crypto.subtle.sign(
+  const signatureBuffer = await globalThis.crypto.subtle.sign(
     { name: "ECDSA", hash: { name: "SHA-256" } },
     keyPair.privateKey,
     new TextEncoder().encode(signingInput)

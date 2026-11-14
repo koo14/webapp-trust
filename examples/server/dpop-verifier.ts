@@ -95,8 +95,11 @@ export function verifyDPoPProof(params: DPoPVerificationParams): DPoPVerificatio
       return { isValid: false, jwkThumbprint: thumbprint, error: "DPoP proof expired or clock skewed" };
     }
 
-    // 6. Verify Access Token Hash if present
-    if (accessToken && payload.ath) {
+    // 6. Verify Access Token Hash (RFC 9449 Section 4.2: ath is mandatory when accessToken is bound)
+    if (accessToken) {
+      if (typeof payload.ath !== "string" || !payload.ath) {
+        return { isValid: false, jwkThumbprint: thumbprint, error: "Missing required access token hash (ath)" };
+      }
       const expectedAth = createHash("sha256").update(accessToken).digest("base64url");
       if (expectedAth !== payload.ath) {
         return { isValid: false, jwkThumbprint: thumbprint, error: "Access token hash (ath) mismatch" };

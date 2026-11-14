@@ -122,6 +122,7 @@ flowchart TB
 ├── SKILL.md                                  # 智慧體主指令手冊（供 Antigravity 查閱）
 │
 ├── references/                               # 深度技術規格與安全白皮書
+│   ├── formal-security-model.md              # 0. 形式化信任邊界、敵手能力模型、五大安全不變量與狀態機
 │   ├── zero-trust-auth-flow.md               # 1. Nonce 協商防重放、多階加鹽雜湊與密碼版本遷移機制
 │   ├── tokens-and-rotation-lifecycle.md      # 2. 雙 Token (AT 1-5m + RT 1-3d) 生命週期、RTR 輪換與熔斷
 │   ├── client-defense-and-webcrypto.md       # 3. 不可匯出金鑰、Wasm 線性記憶體、記憶體擦除、CSP/Trusted Types 及 COI
@@ -202,7 +203,7 @@ try {
 
 ## 🧪 執行端到端整合驗證套件
 
-技能庫內建了完整的模擬驗證腳本 [`verification-suite.ts`](file:///c:/Users/hokdu/.agents/skills/webapp-trust/examples/verification-suite.ts)，涵蓋以下關鍵流程：
+技能庫內建了完整的模擬驗證腳本 [`verification-suite.ts`](./examples/verification-suite.ts)，涵蓋以下關鍵流程：
 
 1. **Step 1-2**：伺服端簽發預先協商 Nonce $\to$ 用戶端 HMAC 預雜湊並使用 `.fill(0)` 立即抹除原始記憶體；
 2. **Step 3-4**：資料庫載入 `v1` 舊版本使用者憑據 $\to$ 伺服端原子核銷 Nonce 並簽發輪換 Nonce；
