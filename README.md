@@ -126,6 +126,7 @@ flowchart TB
 │   ├── zero-trust-auth-flow.md               # 1. Nonce Handshake, Multi-Tier Hashing & Password Migration
 │   ├── tokens-and-rotation-lifecycle.md      # 2. Dual-Token (AT 1-5m + RT 1-3d), RTR Rotation & Breach Revocation
 │   ├── client-defense-and-webcrypto.md       # 3. Non-Extractable Keys, Wasm Linear Memory, Scrubbing & COI
+│   ├── memory-zeroization-and-physical-defense.md # 3b. Anti-DSE Zeroization, OS Dump/OOB & Cold-Boot Defense
 │   ├── dpop-and-device-binding.md            # 4. DPoP (RFC 9449) Device Binding & Web Crypto Signing
 │   ├── envelope-encryption-and-storage.md    # 5. KMS Envelope Encryption (DEK/KEK) & Database Schemas
 │   ├── passwordless-webauthn-totp.md         # 6. Passkeys / WebAuthn Ceremonies & Replay-Resistant TOTP

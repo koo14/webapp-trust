@@ -31,7 +31,7 @@ Before selecting libraries or writing endpoints, align every design or audit aga
 
 ### Agent Execution Workflows & Anti-Patterns
 - **Designing / Building from Scratch**: Start by reading [Formal Security Model](./references/formal-security-model.md) to define trust zones and choose a security tier (Baseline $\to$ High-Assurance), then read the specific `references/*.md` guides for each primitive.
-- **Auditing / Refactoring**: Check invariants `I1`–`I5` systematically. Flag **Red Flags** immediately: AT stored in `localStorage`/`IndexedDB`, `extractable: true` keys, missing `ath` enforcement when `accessToken` is present, non-atomic nonce checks, `window.crypto` inside Workers, or unencrypted TOTP/password verifiers in DB.
+- **Auditing / Refactoring**: Check invariants `I1`–`I5` systematically. Flag **Red Flags** immediately: AT stored in `localStorage`/`IndexedDB`, `extractable: true` keys, missing `ath` enforcement when `accessToken` is present, non-atomic nonce checks, `window.crypto` inside Workers, unencrypted TOTP/password verifiers in DB, or DSE-vulnerable `memset`/non-zeroed secret buffers & enabled core dumps.
 
 ---
 
@@ -104,6 +104,7 @@ flowchart TB
 | **Device Binding** | DPoP (RFC 9449) device-bound session proofs signed with non-extractable client keys. | [DPoP & Device Binding](./references/dpop-and-device-binding.md) |
 | **Worker Sandboxing** | Isolated Web Worker cryptographic thread with zero-copy transferable ArrayBuffers. | [Client Defense & Web Crypto](./references/client-defense-and-webcrypto.md) |
 | **Memory Sanitization** | Wasm deterministic linear memory + JavaScript explicit zeroing (`Uint8Array.fill(0)` and nulling). | [Client Defense & Web Crypto](./references/client-defense-and-webcrypto.md) |
+| **Zeroization & Physical Defense** | Anti-DSE barriered zeroing (`explicit_bzero`/`zeroize`), `mlock`/`MADV_DONTDUMP`, guard pages, RAM encryption/IOMMU against cold boot & OOB reads. | [Memory Zeroization & Physical Defense](./references/memory-zeroization-and-physical-defense.md) |
 | **Runtime Hardening** | Cross-Origin Isolation (`COOP: same-origin`, `COEP: require-corp`) + Strict CSP (`require-trusted-types-for 'script'`). | [Client Defense & Web Crypto](./references/client-defense-and-webcrypto.md) |
 | **Token Invisibility** | BFF architecture sinking session state into `__Host-` `HttpOnly`, `Secure`, `SameSite=Strict` cookies. | [BFF & Session Architecture](./references/bff-and-session-architecture.md) |
 | **Security Telemetry** | Structured OpenTelemetry audit events for replay spikes, token reuse breach, and key mismatches. | [Audit Logging & Threats](./references/audit-logging-and-threat-detection.md) |
@@ -117,6 +118,7 @@ flowchart TB
 - [Detailed Auth Flow & Nonce Protocol](./references/zero-trust-auth-flow.md)
 - [Access Token & Refresh Token Rotation (RTR) Lifecycle](./references/tokens-and-rotation-lifecycle.md)
 - [Client Memory Defense, Wasm & Web Crypto](./references/client-defense-and-webcrypto.md)
+- [Secure Data Erasure (Zeroization) & Physical/Memory Defense](./references/memory-zeroization-and-physical-defense.md)
 - [DPoP (RFC 9449) Device Binding & Non-Extractable Keys](./references/dpop-and-device-binding.md)
 - [Envelope Encryption & KMS Schemas](./references/envelope-encryption-and-storage.md)
 - [Passwordless WebAuthn & TOTP](./references/passwordless-webauthn-totp.md)

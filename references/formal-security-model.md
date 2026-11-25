@@ -69,9 +69,10 @@ No persistent record shares a Data Encryption Key ($\text{DEK}_r$) with another 
 $$\text{Record}_r = \left(\text{Enc}_{\text{DEK}_r}(M_r),\ \text{Wrap}_{\text{KEK}_v}(\text{DEK}_r),\ v\right)$$
 - **Consequence**: Compromise of $\text{DB}$ ($\mathcal{A}_{\text{store}}$) reveals only ciphertext; compromise of a single unwrapped $\text{DEK}_r$ affects only record $r$.
 
-### Invariant I5 — Ephemeral Secret Residency
-Plaintext secrets (raw passwords, unhashed tokens, raw key bytes) must have a bounded residency $T_{\text{res}} \to 0$ in garbage-collected heaps and **zero residency** in durable client storage (`localStorage`, `IndexedDB` plaintext, disk cache):
-$$\text{Lifecycle}(\text{Secret}) = \text{Allocate} \to \text{Transform/Sign} \to \text{ExplicitZero}(\texttt{0x00}) \to \text{Dereference}$$
+### Invariant I5 — Ephemeral Secret Residency & Anti-Extraction Zeroization
+Plaintext secrets (raw passwords, unhashed tokens, raw key bytes) must have a bounded residency $T_{\text{res}} \to 0$ in garbage-collected heaps and **zero residency** in durable client storage (`localStorage`, `IndexedDB` plaintext, swap/core dumps):
+$$\text{Lifecycle}(\text{Secret}) = \text{Lock/Isolate} \to \text{Transform/Sign} \to \text{BarrieredZero}(\texttt{0x00}) \to \text{Unlock/Dereference}$$
+- **Compiler, OS & Physical Enforcement**: Zeroization must survive compiler Dead Store Elimination (DSE), exclude pages from swap/core dumps (`mlock`, `MADV_DONTDUMP`), and keep root keys inside hardware/non-extractable boundaries against cold-boot and DMA extraction (see [Memory Zeroization & Physical Defense](./memory-zeroization-and-physical-defense.md)).
 
 ---
 

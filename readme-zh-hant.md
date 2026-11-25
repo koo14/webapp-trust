@@ -126,6 +126,7 @@ flowchart TB
 │   ├── zero-trust-auth-flow.md               # 1. Nonce 協商防重放、多階加鹽雜湊與密碼版本遷移機制
 │   ├── tokens-and-rotation-lifecycle.md      # 2. 雙 Token (AT 1-5m + RT 1-3d) 生命週期、RTR 輪換與熔斷
 │   ├── client-defense-and-webcrypto.md       # 3. 不可匯出金鑰、Wasm 線性記憶體、記憶體擦除、CSP/Trusted Types 及 COI
+│   ├── memory-zeroization-and-physical-defense.md # 3b. 防編譯最佳化歸零 (Anti-DSE)、OS 傾印/越界防護與冷啟動防禦
 │   ├── dpop-and-device-binding.md            # 4. DPoP (RFC 9449) 裝置綁定與 Web Crypto 簽章機制
 │   ├── envelope-encryption-and-storage.md    # 5. KMS 信封加密 (DEK/KEK) 與資料庫密文表結構設計
 │   ├── passwordless-webauthn-totp.md         # 6. Passkeys / WebAuthn 儀式與防重放 TOTP 規格
